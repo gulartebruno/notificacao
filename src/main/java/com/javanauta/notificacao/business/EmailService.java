@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
-
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
@@ -32,18 +31,17 @@ public class EmailService {
 
     public void enviaEmail(TarefasDTO dto){
 
-        try {
+        try{
             MimeMessage mensagem = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mensagem, true, StandardCharsets.UTF_8.name());
 
             mimeMessageHelper.setFrom(new InternetAddress(remetente, nomeRemetente));
             mimeMessageHelper.setTo(InternetAddress.parse(dto.getEmailUsuario()));
-
             mimeMessageHelper.setSubject("Notificação de Tarefa");
 
             Context context = new Context();
             context.setVariable("nomeTarefa", dto.getNomeTarefa());
-            context.setVariable("dataEvento", dto.getDataEvento());
+            context.setVariable("nomeEvento", dto.getDataEvento());
             context.setVariable("descricao", dto.getDescricao());
             String template = templateEngine.process("notificacao", context);
             mimeMessageHelper.setText(template, true);
@@ -51,7 +49,8 @@ public class EmailService {
 
 
         } catch (UnsupportedEncodingException | MessagingException e) {
-            throw new EmailException("Erro ao enviar email ", e.getCause());
+            throw new EmailException("Erro ao enviar email");
         }
+
     }
 }
